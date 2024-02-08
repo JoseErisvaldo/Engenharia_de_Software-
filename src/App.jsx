@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import api from './Services';
 
 function App() {
 
   const [students, setStudents] = useState([]);
   const [newList, setList] = useState([])
+  
+  
   /*useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('https://sheetdb.io/api/v1/cwauj646tcfmp');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+       
         const data = await response.json();
         setStudents(data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error', error);
       }
     };
 
     fetchData();
-  }, []);*/
+  }, []);
+*/
 
   const alunos = [
     { Matricula: 1, Aluno: "Eduardo", Faltas: 8, P1: 35, P2: 63, P3: 61, Situacao: '', Nota_para_Aprovaçao_Final: '' },
@@ -57,7 +59,7 @@ function App() {
       const soma = notas.reduce((total, nota) => total + nota, 0)
  
       const media = Math.ceil(Math.round(soma / 3))
-      const naF = media-100 
+      const naF = 100-media
       const res = Math.round((60 + faltas) / 2 )
 
       //media +  nota / 2
@@ -69,31 +71,49 @@ function App() {
       let resFinal= ''
       if(media < 50) { 
         reprovadoNota = ' Repovado por Nota'
-        console.log(`${item.Aluno} Repovado por Nota: Media:${media} e Faltas: ${faltas}`)
+       // console.log(`${item.Aluno} Repovado por Nota: Media:${media} e Faltas: ${faltas}`)
       } else if(media >= 50 && media <70 && faltas <= 15) {
         exameFinal = 'Exame Final'
         resFinal = naF
-        console.log(`${item.Aluno}  Exame Final Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`) 
+        //console.log(`${item.Aluno}  Exame Final Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`) 
       }  else if(media >= 50 && faltas > 15) {
         reprovadoFalta = 'Reprovado por falta'
-        console.log(`${item.Aluno} Reprovado por falta: Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`)
+        //console.log(`${item.Aluno} Reprovado por falta: Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`)
       } else if(media >=70 && faltas <=15) {
         aprovado = 'Aprovado'
         zero = '0'
-        console.log(`${item.Aluno} Aprovado: Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`)
+        //console.log(`${item.Aluno} Aprovado: Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`)
       }  else {
-        console.log(`${item.Aluno} Verificar: Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`)
+        //console.log(`${item.Aluno} Verificar: Media:${media} e Faltas: ${faltas} | Porcentagem de faltas ${res}`)
       }
   
       return {...item, reprovadoNota, exameFinal, reprovadoFalta , aprovado, zero, resFinal }
     })
-    console.log(notas)
+
     setList(notas)
+    console.log(notas)
   }
 
   useEffect(()=> {
     calcularMedia()
+
   },[])
+
+
+
+   async function teste () {
+    try {
+      // Faça a requisição POST usando Axios
+      const response = await api.post(
+        'https://sheetdb.io/api/v1/cwauj646tcfmp',
+        newList
+      )
+      console.log('Resposta do servidor:', response.data)
+    } catch (error) {
+      console.error('Erro ao fazer a requisição POST:', error)
+    }
+  }
+
 
   return (
     <div className="App">
@@ -123,7 +143,7 @@ function App() {
                 <td>{item.P2}</td>
                 <td>{item.P3}</td>
                 <td>{item.exameFinal}{item.reprovadoFalta} {item.aprovado} {item.reprovadoNota}</td>
-                <td> {item.zero} </td>
+                <td> {item.zero} {item.resFinal}{item.reprovadoNota}{item.reprovadoFalta} </td>
 
                 
             </tr>
